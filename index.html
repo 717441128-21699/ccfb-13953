@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>16mm 胶片修复流水线</title>
+    <link rel="stylesheet" href="/src/ui/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>16mm 胶片扫描修复</h1>
+      <p class="sub">光学声带解码 · 画面修复 (GPU 着色器) · 24→25fps 运动补偿插帧 · WebCodecs 出片</p>
+    </header>
+
+    <section class="controls">
+      <label>帧数
+        <input id="frameCount" type="number" value="36" min="12" max="96" step="4" />
+      </label>
+      <label>声带制式
+        <select id="trackType">
+          <option value="variable-area">变积式 variable-area</option>
+          <option value="variable-density">变密式 variable-density</option>
+        </select>
+      </label>
+      <label>随机种子
+        <input id="seed" type="number" value="7" min="1" max="9999" />
+      </label>
+      <label>处理路径
+        <select id="backend">
+          <option value="gpu">GPU 着色器</option>
+          <option value="cpu">CPU 参考实现</option>
+        </select>
+      </label>
+      <button id="run">生成并修复</button>
+      <button id="exportBtn" disabled>导出 MP4</button>
+    </section>
+
+    <section id="status" class="status">就绪。参数选定后点击「生成并修复」。</section>
+
+    <section class="metrics" id="metrics" hidden>
+      <div><span class="k">镜头数</span><span id="m-shots">–</span></div>
+      <div><span class="k">去除咔哒声</span><span id="m-clicks">–</span></div>
+      <div><span class="k">音频 SNR</span><span id="m-snr">–</span></div>
+      <div><span class="k">画面 PSNR</span><span id="m-psnr">–</span></div>
+      <div><span class="k">源帧 / 输出帧</span><span id="m-frames">–</span></div>
+      <div><span class="k">时长</span><span id="m-duration">–</span></div>
+    </section>
+
+    <section class="stages">
+      <figure>
+        <figcaption>原始扫描（含声带、片孔、缺陷）</figcaption>
+        <canvas id="scanCanvas" width="640" height="480"></canvas>
+      </figure>
+      <figure>
+        <figcaption>修复后画面（24fps）</figcaption>
+        <canvas id="restoredCanvas" width="464" height="348"></canvas>
+      </figure>
+      <figure>
+        <figcaption>运动补偿插帧（25fps）</figcaption>
+        <canvas id="interpCanvas" width="464" height="348"></canvas>
+      </figure>
+    </section>
+
+    <section class="audio">
+      <figure>
+        <figcaption>解码音频波形（去咔哒 + 去嘶声后）</figcaption>
+        <canvas id="waveCanvas" width="900" height="160"></canvas>
+      </figure>
+    </section>
+
+    <script type="module" src="/src/ui/main.ts"></script>
+  </body>
+</html>
